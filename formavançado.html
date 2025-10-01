@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Formulário Completo com JS</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      max-width: 600px;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .error {
+      border: 2px solid red;
+    }
+  </style>
+</head>
+<body>
+  <h1>Cadastro de Usuário</h1>
+  <form id="meuFormulario" action="/submit" method="post" novalidate>
+    <label for="nome">Nome completo:</label>
+    <input type="text" id="nome" name="nome" placeholder="Digite seu nome" required minlength="3" />
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" placeholder="exemplo@dominio.com" required />
+
+    <label for="senha">Senha:</label>
+    <input type="password" id="senha" name="senha" required minlength="6" />
+
+    <label for="idade">Idade:</label>
+    <input type="number" id="idade" name="idade" min="1" max="120" required />
+
+    <label for="genero">Gênero:</label>
+    <select id="genero" name="genero" required>
+      <option value="">Selecione</option>
+      <option value="feminino">Feminino</option>
+      <option value="masculino">Masculino</option>
+      <option value="outro">Outro</option>
+      <option value="nao_informar">Prefiro não informar</option>
+    </select>
+
+    <label for="interesses">Interesses:</label>
+    <input type="checkbox" id="esportes" name="interesses" value="esportes" />
+    <label for="esportes" style="display:inline;">Esportes</label><br />
+    <input type="checkbox" id="musica" name="interesses" value="musica" />
+    <label for="musica" style="display:inline;">Música</label><br />
+    <input type="checkbox" id="tecnologia" name="interesses" value="tecnologia" />
+    <label for="tecnologia" style="display:inline;">Tecnologia</label><br />
+
+    <label for="mensagem">Mensagem adicional:</label>
+    <textarea id="mensagem" name="mensagem" rows="5" placeholder="Escreva algo sobre você..."></textarea>
+
+    <button type="submit">Enviar Cadastro</button>
+  </form>
+
+  <script>
+    const form = document.getElementById('meuFormulario');
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault(); // evita o envio imediato
+
+      // limpar estilos de erro
+      const fields = form.querySelectorAll('input, select, textarea');
+      fields.forEach(field => field.classList.remove('error'));
+
+      let valid = true;
+
+      // validar nome
+      const nome = form.nome;
+      if (nome.value.trim().length < 3) {
+        valid = false;
+        nome.classList.add('error');
+      }
+
+      // validar email (HTML5 já faz validação básica, mas reforçamos aqui)
+      const email = form.email;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email.value.trim())) {
+        valid = false;
+        email.classList.add('error');
+      }
+
+      // validar senha
+      const senha = form.senha;
+      if (senha.value.length < 6) {
+        valid = false;
+        senha.classList.add('error');
+      }
+
+      // validar idade
+      const idade = form.idade;
+      const idadeValor = parseInt(idade.value, 10);
+      if (!(idadeValor >= 1 && idadeValor <= 120)) {
+        valid = false;
+        idade.classList.add('error');
+      }
+
+      // validar gênero
+      const genero = form.genero;
+      if (genero.value === "") {
+        valid = false;
+        genero.classList.add('error');
+      }
+
+      if (!valid) {
+        alert('Por favor, preencha corretamente os campos em destaque.');
+        return;
+      }
+
+      // coletar interesses selecionados
+      const interesses = [];
+      form.querySelectorAll('input[name="interesses"]:checked').forEach(checkbox => {
+        interesses.push(checkbox.value);
+      });
+
+      // mostrar os dados (exemplo)
+      alert(
+        `Nome: ${nome.value}\n` +
+        `Email: ${email.value}\n` +
+        `Idade: ${idade.value}\n` +
+        `Gênero: ${genero.options[genero.selectedIndex].text}\n` +
+        `Interesses: ${interesses.join(', ') || 'Nenhum'}\n` +
+        `Mensagem: ${form.mensagem.value}`
+      );
+
+      // Aqui você pode enviar os dados via AJAX/fetch se quiser.
+      // form.submit();  // para enviar normalmente depois da validação.
+    });
+  </script>
+</body>
+</html>
